@@ -1,11 +1,16 @@
-# Deriv Trading Workspace
+# Trade Desk — Independent Deriv Trading Workspace
 
-An independent third-party trading workspace that connects to Deriv's official APIs. It is not affiliated with or endorsed by Deriv.
+A third-party trading interface built around Deriv's public market data and (in later stages) authorised account APIs. It is not Deriv's official website, does not use Deriv branding assets, and is not affiliated with or endorsed by Deriv.
 
-## Stack
-- Next.js 15, React 19, TypeScript, Tailwind CSS
-- Deriv public WebSocket market feed
-- Lightweight Charts dependency for charting
+## Pages included
+- Trade: live market chart, market selector, contract configuration, order preview, positions tabs.
+- Markets: searchable live active-symbol catalogue and market categories.
+- Portfolio: account metrics and open/closed contract workspace.
+- Cashier: deposit, withdrawal and transfer entry points (requires Deriv authorisation).
+- Reports: performance, profit/loss and trade analysis sections.
+- Statement: account transaction history workspace.
+- Settings: profile, trading preferences, security and notifications.
+- Help: platform guidance and security notes.
 
 ## Run locally
 ```bash
@@ -13,19 +18,12 @@ npm install
 cp .env.example .env.local
 npm run dev
 ```
-Open http://localhost:3000.
-
-## Current status
-- Responsive trading workspace UI and live public market feed.
-- Market catalogue and live tick stream with symbol switching.
-- Trade controls are intentionally in preview mode until authenticated Deriv OAuth, proposal/buy flow, and contract monitoring are implemented.
-- Never enter a real account token into client-side code or commit secrets.
 
 ## Environment
-Set `NEXT_PUBLIC_DERIV_APP_ID` to the Deriv application ID configured for this project. Configure the redirect URI in the Deriv application settings. OAuth callback and server-side token handling are a subsequent implementation step.
+Set `NEXT_PUBLIC_DERIV_APP_ID` to your Deriv application ID. Public market data uses Deriv's WebSocket API. Do not place account tokens in browser code or commit secrets.
 
-## Safety and account integrity
-Displayed live prices are sourced from Deriv's public market feed. Real balances must only be read from the authenticated Deriv account. Editable balances, if later added, must be isolated demo simulations and never overwrite or impersonate real account balances.
+## Integration status
+The market catalogue and tick stream use the public Deriv WebSocket. Authenticated OAuth, account balance retrieval, cashier actions, proposal pricing, contract purchase, open-contract monitoring, settlement, and real reports still require implementation and testing. Trade execution is deliberately disabled until those steps are complete. Real balances are never editable or fabricated; any future editable balance feature must be confined to a clearly labelled local demo simulator.
 
-## Deployment
-Import this repository into Vercel, use the Next.js preset, add the environment variables, and deploy. The frontend is independently hosted; no GOON FX project or domain is modified.
+## Deploy
+Import this repository into Vercel with the Next.js preset. Add environment variables and deploy. This repository is independent of any other trading project.
