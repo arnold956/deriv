@@ -25,3 +25,17 @@
 .auth-callback-card h1{font-size:20px;margin:15px 0 8px}.auth-callback-card p{font-size:12px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}
 .auth-callback-card a{display:inline-block;color:var(--gold);font-size:11px;margin-top:12px}
 .login-btn:disabled{opacity:.65;cursor:wait}
+
+/* Authenticated Deriv trading ticket */
+.authenticated-trade{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.direction-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.direction-choice{border:1px solid var(--line,#30343b);background:var(--panel,#171a20);color:var(--text,#f4f5f6);border-radius:8px;padding:11px 12px;font-weight:650;cursor:pointer}
+.direction-choice.selected-rise{background:rgba(25,170,112,.14);border-color:#19aa70;color:#54d6a0}
+.direction-choice.selected-fall{background:rgba(225,77,86,.14);border-color:#e14d56;color:#ff858b}
+.proposal-values{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.proposal-values>div{display:flex;flex-direction:column;gap:6px;padding:11px;border:1px solid var(--line,#30343b);border-radius:8px;background:rgba(255,255,255,.025)}
+.proposal-values span{font-size:11px;color:var(--muted,#9ba1ab)}
+.proposal-values b{font-size:14px;color:var(--text,#f4f5f6)}
+.trade-feedback{font-size:12px;line-height:1.45;color:var(--muted,#a6acb6);margin:0;min-height:34px}
+.buy-btn:disabled{opacity:.48;cursor:not-allowed;filter:grayscale(.25)}
+.trade-account-mode{font-size:10px;color:var(--muted,#9299a4);text-align:center}
