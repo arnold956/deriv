@@ -7,6 +7,7 @@ import {
   ShieldCheck, SlidersHorizontal, Sparkles, TrendingUp, Wallet, X
 } from "lucide-react";
 import { createDerivSocket, formatQuote, type Market, type Tick } from "@/lib/deriv";
+import AuthenticatedTrade from "@/components/AuthenticatedTrade";
 
 type PageKey = "Trade"|"Markets"|"Portfolio"|"Cashier"|"Reports"|"Statement"|"Settings"|"Help";
 const groups = [
@@ -53,6 +54,7 @@ export default function Home(){
  const filtered=useMemo(()=>markets.filter(m=>(m.display_name.toLowerCase().includes(marketSearch.toLowerCase())||m.symbol.toLowerCase().includes(marketSearch.toLowerCase()))&&(marketGroup==="All"||((m.market||"").toLowerCase().includes(marketGroup.toLowerCase())))).slice(0,100),[markets,marketSearch,marketGroup]);
  const points=useMemo(()=>{const a=ticks.slice(-90);if(a.length<2)return "";const lo=Math.min(...a.map(x=>x.quote)),hi=Math.max(...a.map(x=>x.quote)),r=hi-lo||1;return a.map((p,i)=>`${(i/(a.length-1))*1000},${250-((p.quote-lo)/r)*205}`).join(" ");},[ticks]);
  const current=markets.find(m=>m.symbol===symbol)?.display_name||symbol;
+ const selectedAccount=accounts.find((a:any)=>a.account_id===account);
  const navigate=(p:PageKey)=>{setPage(p);setMobileMenu(false);};
  const startOAuth=async()=>{try{setAuthLoading(true);setAuthError("");const clientId=process.env.NEXT_PUBLIC_DERIV_OAUTH_CLIENT_ID;if(!clientId){setAuthError("Add NEXT_PUBLIC_DERIV_OAUTH_CLIENT_ID from your registered Deriv OAuth application.");setAuthLoading(false);return;}const bytes=crypto.getRandomValues(new Uint8Array(64));const alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";const verifier=Array.from(bytes,b=>alphabet[b%alphabet.length]).join("");const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(verifier));const challenge=btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");const state=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");sessionStorage.setItem("deriv_pkce_verifier",verifier);sessionStorage.setItem("deriv_oauth_state",state);const redirectUri=process.env.NEXT_PUBLIC_DERIV_REDIRECT_URI||window.location.origin+"/auth/callback";const query=new URLSearchParams({response_type:"code",client_id:clientId,redirect_uri:redirectUri,scope:"trade",state,code_challenge:challenge,code_challenge_method:"S256"});window.location.assign("https://auth.deriv.com/oauth2/auth?"+query.toString());}catch(e){setAuthError("Could not start secure Deriv sign-in.");setAuthLoading(false);}};
  const connectNotice=startOAuth;
@@ -72,9 +74,7 @@ export default function Home(){
    <label className="control-label">Contract type</label><select className="control" value={contract} onChange={e=>setContract(e.target.value)}>{contracts.map(c=><option key={c}>{c}</option>)}</select>
    <label className="control-label">Stake amount</label><div className="input-with-suffix"><input value={stake} onChange={e=>setStake(e.target.value)} type="number" min=".35" step=".01"/><span>USD</span></div>
    <label className="control-label">Duration</label><div className="duration-row"><input className="control" type="number" min="1" value={duration} onChange={e=>setDuration(e.target.value)}/><select className="control" value={unit} onChange={e=>setUnit(e.target.value)}>{["Ticks","Seconds","Minutes","Hours","Days"].map(x=><option key={x}>{x}</option>)}</select></div>
-   <div className="payout-box"><div><span>Potential payout</span><b>—</b></div><div><span>Potential profit</span><b>—</b></div><small>Live proposal pricing appears after you connect your Deriv account.</small></div>
-   <div className="secure-note"><ShieldCheck size={16}/><span>Real-money orders are disabled until secure account authorisation and live proposal validation are connected.</span></div>
-   <button className="buy-btn" onClick={connectNotice}>Connect account to trade</button>
+   <AuthenticatedTrade accountId={account} accountType={selectedAccount?.account_type||""} currency={selectedAccount?.currency||"USD"} symbol={symbol} contract={contract} stake={stake} duration={duration} unit={unit}/>
    <div className="ticket-foot">Prices can move quickly. Trading involves risk.</div>
   </aside>
  </div>;
